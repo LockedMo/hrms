@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hrms.dao.recruitDao">
+    <!--resultMap属性的值是 resultMap配置节id的值。当承载返回结果的java bean数据字段与数据库表字段格式不一致时，使用resultMap -->
+    <!-- 如果返回多行数据，会用list封装UserData -->
+    <select id="getRecruit" resultType="com.hrms.model.recruit">
+        select a.recId,a.jobId,a.num,a.salId,a.eduBG,a.comment,b.jname,c.money
+        from recruit as a
+        left join job as b
+        on a.jobId=b.jobId
+        left join salary as c
+        on a.salId=c.salId
+        order by recId asc
+        limit #{current},#{limit}
+    </select>
+
+    <insert id="insertRecruit" parameterType="com.hrms.model.recruit">
+        insert into recruit
+        values (#{recId},#{jobId},#{num},#{salId},#{eduBG},#{comment});
+    </insert>
+
+    <delete id="deleteRecruit">
+        delete from recruit
+        where recId=#{recId}
+    </delete>
+
+    <update id="updateRecruit" parameterType="com.hrms.model.recruit">
+        update recruit
+        set jobId=#{jobId},num=#{num},salId=#{salId},eduBG=#{eduBG},comment=#{comment}
+        where recId=#{recId}
+    </update>
+
+    <select id="fuzzySelectRecruit" parameterType="com.hrms.model.recruit" resultType="com.hrms.model.recruit">
+        select a.recId,a.jobId,a.num,a.salId,a.eduBG,a.comment,b.jname,c.money
+        from recruit as a,job as b,salary as c
+        where a.salId=c.salId and a.jobId=b.jobId
+        <if test="recId != null and recId !=''">
+            and recId like #{recId}
+        </if>
+        <if test="jobId != null and jobId != ''">
+            and jobId like #{jobId}
+        </if>
+        <if test="jname != null and jname != ''">
+            and jname like #{jname}
+        </if>
+        <if test="num != null and num !=''">
+            and num like #{num}
+        </if>
+        <if test="money != null and money != ''">
+            and money like #{money}
+        </if>
+        <if test="comment != null and comment != ''">
+            and comment like #{comment}
+        </if>
+    </select>
+
+</mapper>

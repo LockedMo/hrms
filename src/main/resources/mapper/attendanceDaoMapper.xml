@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hrms.dao.attendanceDao">
+    <!--resultMap属性的值是 resultMap配置节id的值。当承载返回结果的java bean数据字段与数据库表字段格式不一致时，使用resultMap -->
+    <!-- 如果返回多行数据，会用list封装UserData -->
+    <select id="getAttendance" resultType="com.hrms.model.attendance">
+        select a.attId,a.staId,b.tname,a.reason,a.time,a.deal
+        from attendance as a
+        left join staff as b
+        on a.staId = b.staId
+        order by attId asc
+        limit #{current},#{limit}
+    </select>
+
+    <insert id="insertAttendance" parameterType="com.hrms.model.attendance">
+        insert into attendance
+        values (#{attId},#{staId},#{reason},#{time},#{deal});
+    </insert>
+
+    <delete id="deleteAttendance">
+        delete from attendance
+        where attId=#{attId}
+    </delete>
+
+    <update id="updateAttendance" parameterType="com.hrms.model.attendance">
+        update attendance
+        set staId=#{staId},reason=#{reason},time=#{time},deal=#{deal}
+        where attId=#{attId}
+    </update>
+
+    <select id="fuzzySelectAttendance" parameterType="com.hrms.model.attendance" resultType="com.hrms.model.attendance">
+        select a.attId,a.staId,b.tname,a.reason,a.time,a.deal
+        from attendance as a
+        left join staff as b
+        on a.staId = b.staId
+        <where>
+            <if test="attId != null and attId !=''">
+                attId like #{attId}
+            </if>
+            <if test="staId != null and staId != ''">
+                staId like #{staId}
+            </if>
+            <if test="tname != null and tname != ''">
+                tname like #{tname}
+            </if>
+            <if test="reason != null and reason != ''">
+                reason like #{reason}
+            </if>
+            <if test="time != null and time != ''">
+                time like #{time}
+            </if>
+        </where>
+    </select>
+
+</mapper>

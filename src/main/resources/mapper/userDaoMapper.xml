@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hrms.dao.userDao">
+    <!--resultMap属性的值是 resultMap配置节id的值。当承载返回结果的java bean数据字段与数据库表字段格式不一致时，使用resultMap -->
+    <!-- 如果返回多行数据，会用list封装UserData -->
+    <select id="getUserById" resultType="com.hrms.model.user">
+         select * from user where userId=#{userId} and pwd=#{pwd}
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        select COUNT(*)
+        from ${tableName}
+    </select>
+</mapper>

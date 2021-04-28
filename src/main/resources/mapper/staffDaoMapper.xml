@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hrms.dao.staffDao">
+    <!--resultMap属性的值是 resultMap配置节id的值。当承载返回结果的java bean数据字段与数据库表字段格式不一致时，使用resultMap -->
+    <!-- 如果返回多行数据，会用list封装UserData -->
+    <select id="getStaff" resultType="com.hrms.model.staff">
+        select a.staId,a.tname,a.address,a.sex,a.phoneNumber,a.comment,a.secId,b.ename,b.charge,a.salId,c.money,c.level,a.jobId,d.jname,e.url
+        from staff as a
+        left join section as b
+        on a.secId = b.secId
+        left join salary as c
+        on a.salId = c.salId
+        left join job as d
+        on a.jobId = d.jobId
+        left join images as e
+        on a.staId = e.staId
+        order by staId asc
+        limit #{current},#{limit}
+    </select>
+
+    <insert id="insertStaff" parameterType="com.hrms.model.staff">
+        insert into staff
+        values (#{staId},#{tname},#{sex},#{phoneNumber},#{address},#{secId},#{salId},#{jobId},#{comment})
+    </insert>
+
+    <delete id="deleteStaff">
+        delete from staff
+        where staId=#{staId}
+    </delete>
+
+    <update id="updateStaff" parameterType="com.hrms.model.staff">
+        update staff
+        set tname=#{tname},sex=#{sex},phoneNumber=#{phoneNumber},address=#{address},secId=#{secId},salId=#{salId},jobId=#{jobId},comment=#{comment}
+        where staId=#{staId}
+    </update>
+
+    <select id="fuzzySelectStaff" parameterType="com.hrms.model.staff" resultType="com.hrms.model.staff">
+        select a.staId,a.tname,a.address,a.sex,a.phoneNumber,a.comment,a.secId,b.ename,b.charge,a.salId,c.money,c.level,a.jobId,d.jname
+        from staff as a,section as b,salary as c,job as d
+        where a.secId=b.secId and a.salId=c.salId and a.jobId=d.jobId
+        <if test="staId != null and staId != ''">
+            and a.staId like #{staId}
+        </if>
+        <if test="tname != null and tname != ''">
+            and a.tname like #{tname}
+        </if>
+        <if test="sex != null and sex != ''">
+            and a.sex like #{sex}
+        </if>
+        <if test="phoneNumber != null and phoneNumber != ''">
+            and a.phoneNumber like #{phoneNumber}
+        </if>
+        <if test="address != null and address != ''">
+            and a.address like #{address}
+        </if>
+        <if test="secId != null and secId != ''">
+            and a.secId like #{secId}
+        </if>
+        <if test="salId != null and salId != null">
+            and a.salId like #{salId}
+        </if>
+
+    </select>
+
+    <select id="getStaffBySecId" resultType="com.hrms.model.staff">
+        select *
+        from staff
+        where secId = #{secId}
+    </select>
+
+</mapper>

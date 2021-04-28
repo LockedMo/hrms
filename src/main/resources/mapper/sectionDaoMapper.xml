@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hrms.dao.sectionDao">
+    <!--resultMap属性的值是 resultMap配置节id的值。当承载返回结果的java bean数据字段与数据库表字段格式不一致时，使用resultMap -->
+    <!-- 如果返回多行数据，会用list封装UserData -->
+
+    <select id="getSection" resultType="com.hrms.model.section">
+        select  sta_sec.secId,sta_sec.tname,sta_sec.ename,sta_sec.charge,count(staff.secId) as num
+        from sta_sec
+        left join staff
+        on sta_sec.secId=staff.secId
+        group by sta_sec.secId
+        order by secId asc
+        limit #{current},#{limit}
+    </select>
+
+    <delete id="deleteSectionById">
+        delete from section where secId=#{secId}
+    </delete>
+
+    <update id="updateSection" parameterType="com.hrms.model.section">
+        update section
+        set ename=#{ename},charge=#{charge}
+        where secId=#{secId}
+    </update>
+
+    <insert id="insertSection" parameterType="com.hrms.model.section">
+        insert into section
+        values (#{secId},#{ename},#{charge})
+    </insert>
+
+    <select id="fuzzySelectSection" parameterType="com.hrms.model.section" resultType="com.hrms.model.section">
+        select  sta_sec.secId,sta_sec.tname,sta_sec.ename,sta_sec.charge,count(staff.secId) as num
+        from sta_sec
+        left join staff
+        on sta_sec.secId=staff.secId
+        group by sta_sec.secId
+        <if test="secId != null or ename != null or num != null or charge != null">
+            having
+        </if>
+        <if test="secId != null and secId !=''">
+            secId like #{secId}
+        </if>
+        <if test="ename != null and ename != ''">
+            ename like #{ename}
+        </if>
+        <if test="num != null and num != ''">
+            num  like  #{num}
+        </if>
+        <if test="charge != null and charge != ''">
+            staff.tname like #{charge}
+        </if>
+    </select>
+
+
+</mapper>

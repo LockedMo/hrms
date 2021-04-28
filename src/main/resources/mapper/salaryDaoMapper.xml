@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hrms.dao.salaryDao">
+    <!--resultMap属性的值是 resultMap配置节id的值。当承载返回结果的java bean数据字段与数据库表字段格式不一致时，使用resultMap -->
+    <!-- 如果返回多行数据，会用list封装UserData -->
+    <select id="getSalary" resultType="com.hrms.model.salary">
+        SELECT a.salId,a.level,a.money,count(b.staId) as num
+        FROM salary as a
+        left join staff as b
+        on a.salId = b.salId
+        group by a.salId
+        order by salId asc
+        limit #{current},#{limit}
+    </select>
+
+    <insert id="insertSalary" parameterType="com.hrms.model.salary">
+        insert into salary
+        values (#{salId},#{level},#{money})
+    </insert>
+
+    <delete id="deleteSalary">
+        delete from salary where salId = #{salId}
+    </delete>
+
+    <update id="updateSalary" parameterType="com.hrms.model.salary">
+        update salary
+        set level=#{level},money=#{money}
+        where salId=#{salId}
+    </update>
+
+    <select id="fuzzySelectSalary" parameterType="com.hrms.model.salary" resultType="com.hrms.model.salary">
+        select *
+        from salary
+        <where>
+            <if test="salId != null and salId !=''">
+                salId like #{salId}
+            </if>
+            <if test="level != null and level != ''">
+                level like #{level}
+            </if>
+            <if test="money != null and money != ''">
+                money = #{money}
+            </if>
+        </where>
+    </select>
+
+</mapper>
